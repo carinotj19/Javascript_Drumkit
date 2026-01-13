@@ -2,48 +2,72 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>JS Drum Kit</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="icon" href="https://fav.farm/🔥" />
+    <link rel="icon" href="https://fav.farm/DR" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <div class="keys">
-      <div data-key="65" class="key">
-        <kbd>A</kbd>
-        <span class="sound">clap</span>
-      </div>
-      <div data-key="83" class="key">
-        <kbd>S</kbd>
-        <span class="sound">hihat</span>
-      </div>
-      <div data-key="68" class="key">
-        <kbd>D</kbd>
-        <span class="sound">kick</span>
-      </div>
-      <div data-key="70" class="key">
-        <kbd>F</kbd>
-        <span class="sound">openhat</span>
-      </div>
-      <div data-key="71" class="key">
-        <kbd>G</kbd>
-        <span class="sound">boom</span>
-      </div>
-      <div data-key="72" class="key">
-        <kbd>H</kbd>
-        <span class="sound">ride</span>
-      </div>
-      <div data-key="74" class="key">
-        <kbd>J</kbd>
-        <span class="sound">snare</span>
-      </div>
-      <div data-key="75" class="key">
-        <kbd>K</kbd>
-        <span class="sound">tom</span>
-      </div>
-      <div data-key="76" class="key">
-        <kbd>L</kbd>
-        <span class="sound">tink</span>
-      </div>
+    <div class="page">
+      <header class="hero">
+        <p class="eyebrow">Interactive Audio</p>
+        <h1>JavaScript Drum Kit</h1>
+        <p class="tagline">Hit A-L on your keyboard or tap a pad to play.</p>
+      </header>
+
+      <main class="keys" aria-label="Drum kit">
+        <button data-key="65" class="key" type="button" aria-label="Clap (A)">
+          <kbd>A</kbd>
+          <span class="sound">Clap</span>
+        </button>
+        <button data-key="83" class="key" type="button" aria-label="Hi-hat (S)">
+          <kbd>S</kbd>
+          <span class="sound">Hi-hat</span>
+        </button>
+        <button data-key="68" class="key" type="button" aria-label="Kick (D)">
+          <kbd>D</kbd>
+          <span class="sound">Kick</span>
+        </button>
+        <button
+          data-key="70"
+          class="key"
+          type="button"
+          aria-label="Open hat (F)"
+        >
+          <kbd>F</kbd>
+          <span class="sound">Open hat</span>
+        </button>
+        <button data-key="71" class="key" type="button" aria-label="Boom (G)">
+          <kbd>G</kbd>
+          <span class="sound">Boom</span>
+        </button>
+        <button data-key="72" class="key" type="button" aria-label="Ride (H)">
+          <kbd>H</kbd>
+          <span class="sound">Ride</span>
+        </button>
+        <button data-key="74" class="key" type="button" aria-label="Snare (J)">
+          <kbd>J</kbd>
+          <span class="sound">Snare</span>
+        </button>
+        <button data-key="75" class="key" type="button" aria-label="Tom (K)">
+          <kbd>K</kbd>
+          <span class="sound">Tom</span>
+        </button>
+        <button data-key="76" class="key" type="button" aria-label="Tink (L)">
+          <kbd>L</kbd>
+          <span class="sound">Tink</span>
+        </button>
+      </main>
+
+      <footer class="footer">
+        <p>Built with vanilla JavaScript. Audio samples included.</p>
+      </footer>
     </div>
 
     <audio data-key="65" src="sounds/clap.wav"></audio>
@@ -57,27 +81,47 @@
     <audio data-key="76" src="sounds/tink.wav"></audio>
 
     <script>
-  
-      function playSound(e) {
-        const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
-        const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
-        if (!audio) return;
+      const playingTimers = new WeakMap();
+
+      function playSound(keyCode) {
+        const audio = document.querySelector(`audio[data-key="${keyCode}"]`);
+        const key = document.querySelector(`.key[data-key="${keyCode}"]`);
+        if (!audio || !key) return;
         audio.currentTime = 0;
         audio.play();
         key.classList.add("playing");
-      }
-      function removeTransition(e) {
-        if (e.propertyName == "transform") return;
 
-        this.classList.remove("playing");
+        const existingTimer = playingTimers.get(key);
+        if (existingTimer) {
+          clearTimeout(existingTimer);
+        }
+
+        const timer = setTimeout(() => {
+          key.classList.remove("playing");
+          playingTimers.delete(key);
+        }, 150);
+
+        playingTimers.set(key, timer);
+      }
+
+      function removeTransition(e) {
+        if (e.propertyName !== "transform") return;
+        const key = e.currentTarget;
+        key.classList.remove("playing");
+        const timer = playingTimers.get(key);
+        if (timer) {
+          clearTimeout(timer);
+          playingTimers.delete(key);
+        }
       }
 
       const keys = document.querySelectorAll(".key");
-      keys.forEach((key) =>
-        key.addEventListener("transitionend", removeTransition)
-      );
+      keys.forEach((key) => {
+        key.addEventListener("transitionend", removeTransition);
+        key.addEventListener("click", () => playSound(key.dataset.key));
+      });
 
-      window.addEventListener("keydown", playSound);
+      window.addEventListener("keydown", (e) => playSound(e.keyCode));
     </script>
   </body>
 </html>
