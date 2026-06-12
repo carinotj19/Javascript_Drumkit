@@ -2,6 +2,9 @@
 
 An interactive drum kit built using HTML, CSS, and JavaScript. Press designated keys to play different drum sounds.
 
+## Preview
+https://carinotj19.github.io/Javascript_Drumkit/
+
 ## 📂 Files Included
 
 - `index.html` – Main HTML file containing the structure of the drum kit.
