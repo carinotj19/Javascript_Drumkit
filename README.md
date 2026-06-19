@@ -17,7 +17,7 @@ https://carinotj19.github.io/Javascript_Drumkit/
 
 ### Prerequisites
 
-- A modern web browser (e.g., Chrome, Firefox, Edge).
+- A modern web browser (e.g., Chrome, Firefox, Edge)..
 
 ### Installation
 
