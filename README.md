@@ -14,7 +14,7 @@ An interactive drum kit built using HTML, CSS, and JavaScript. Press designated 
 
 ### Prerequisites
 
-- A modern web browser (e.g., Chrome, Firefox, Edge).
+- A modern web browser (e.g., Chrome, Firefox, Edge)..
 
 ### Installation
 
